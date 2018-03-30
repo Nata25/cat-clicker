@@ -16,43 +16,45 @@ document.addEventListener('DOMContentLoaded', function() {
         this.name = name;
         this.img = img;
         this.count = 0;
+
+        function renderName() {
+            console.log(this);
+            this.nameElement = document.createElement('p');
+            this.nameElement.innerText = this.name;
+        }
+
+        function renderImage() {
+            this.imageElement = document.createElement('img');
+            this.imageElement.setAttribute('src', this.img);
+        }
+
+        function makeClickable() {
+            this.clicks = document.createElement('div');
+            this.clicks.innerText = this.count;
+            this.clicks.className = 'count';
+            const clicks = this.clicks;
+            let count = this.count;
+            this.imageElement.addEventListener('click', function() {
+                count ++;
+                clicks.innerText = count;
+            });
+        }
+
+        function makeAlive() {
+            this.container = document.createElement('div');
+            this.renderName();
+            this.renderImage();
+            this.container.appendChild(this.nameElement);
+            this.container.appendChild(this.imageElement);
+            this.makeClickable();
+            this.container.appendChild(this.clicks);
+            document.body.appendChild(this.container);
+        }
+
         this.renderName = renderName;
         this.renderImage = renderImage;
         this.makeClickable = makeClickable;
         this.makeAlive = makeAlive;
-    }
-
-    Cat.prototype.renderName = function() {
-        this.nameElement = document.createElement('p');
-        this.nameElement.innerText = this.name;
-    }
-
-    Cat.prototype.renderImage = function() {
-        this.imageElement = document.createElement('img');
-        this.imageElement.setAttribute('src', this.img);
-    }
-
-    Cat.prototype.makeClickable = function() {
-        this.clicks = document.createElement('div');
-        this.clicks.innerText = this.count;
-        this.clicks.className = 'count';
-        const clicks = this.clicks;
-        let count = this.count;
-        this.imageElement.addEventListener('click', function() {
-            count ++;
-            clicks.innerText = count;
-        });
-    }
-
-    Cat.prototype.makeAlive = function() {
-        this.container = document.createElement('div');
-        this.renderName();
-        this.renderImage();
-        this.container.appendChild(this.nameElement);
-        this.container.appendChild(this.imageElement);
-        this.makeClickable();
-        this.container.appendChild(this.clicks);
-        document.body.appendChild(this.container);
     }
 
     for (var i = 0; i < cats.length; i++) {
