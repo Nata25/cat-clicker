@@ -1,8 +1,19 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
 img  {
     max-height: 200px;
 }
+.cat {
+    width: 100vw;
+    margin: 10px 0 50px;
+    text-align: center;
+}
 .count {
+    margin: 10px auto;
     width: 40px;
     height: 20px;
-    background: yellow;
+    background: #ff9;
+
 }

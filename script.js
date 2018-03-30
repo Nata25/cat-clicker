@@ -18,8 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         this.count = 0;
 
         function renderName() {
-            console.log(this);
-            this.nameElement = document.createElement('p');
+            this.nameElement = document.createElement('h2');
             this.nameElement.innerText = this.name;
         }
 
@@ -42,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function makeAlive() {
             this.container = document.createElement('div');
+            this.container.className = 'cat';
             this.renderName();
             this.renderImage();
             this.container.appendChild(this.nameElement);
