@@ -1,3 +1,5 @@
+"use strict"
+
 document.addEventListener('DOMContentLoaded', function() {
     var cats = [
         {
@@ -10,26 +12,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     ];
 
-    for (var i = 0; i < cats.length; i++) {
-        let counter = 0;
-        const cat = document.createElement('div');
-        const img = document.createElement('img');
-        img.setAttribute('src', cats[i].url);
-        const name = document.createElement('p');
-        name.innerText = cats[i].name;
-        cat.appendChild(name);
-        cat.appendChild(img);
-        const clicks = document.createElement('div');
-        clicks.innerText = counter;
-        clicks.className = 'count';
-        cat.appendChild(clicks);
+    function Cat(name, img) {
+        this.name = name;
+        this.img = img;
+        this.count = 0;
+        this.renderName = renderName;
+        this.renderImage = renderImage;
+        this.makeClickable = makeClickable;
+        this.makeAlive = makeAlive;
+    }
 
-        document.body.appendChild(cat);
+    Cat.prototype.renderName = function() {
+        this.nameElement = document.createElement('p');
+        this.nameElement.innerText = this.name;
+    }
 
-        img.addEventListener('click', function() {
-            console.log('click');
-            counter ++;
-            clicks.innerText = counter;
+    Cat.prototype.renderImage = function() {
+        this.imageElement = document.createElement('img');
+        this.imageElement.setAttribute('src', this.img);
+    }
+
+    Cat.prototype.makeClickable = function() {
+        this.clicks = document.createElement('div');
+        this.clicks.innerText = this.count;
+        this.clicks.className = 'count';
+        const clicks = this.clicks;
+        let count = this.count;
+        this.imageElement.addEventListener('click', function() {
+            count ++;
+            clicks.innerText = count;
         });
+    }
+
+    Cat.prototype.makeAlive = function() {
+        this.container = document.createElement('div');
+        this.renderName();
+        this.renderImage();
+        this.container.appendChild(this.nameElement);
+        this.container.appendChild(this.imageElement);
+        this.makeClickable();
+        this.container.appendChild(this.clicks);
+        document.body.appendChild(this.container);
+    }
+
+    for (var i = 0; i < cats.length; i++) {
+        var cat = new Cat(cats[i].name, cats[i].url);
+        cat.makeAlive();
     }
 });
