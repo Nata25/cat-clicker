@@ -16,6 +16,22 @@
                 <img src="" alt="cat"/>
                 <div id="counter" class="count"></div>
             </div>
+
+            <button id="switchAdminMode">Admin mode</button>
+
+            <form action="post" id="adminForm" class="adminForm">
+                <label for="nameInput">Cat's name
+                    <input id="nameInput" name="name" type="text"/>
+                </label>
+                <label for="imgInput">Cat's image
+                    <input id="imgInput" name="url" type="text"/>
+                </label>
+                <label for="clicksInput">Number of clicks
+                    <input id="clicksInput" name="clicks" type="text"/>
+                </label>
+                <button id="save">Save</button>
+                <button id="cancel">Cancel</button>
+            </form>
         </main>
         
         <script src="script.js"></script>

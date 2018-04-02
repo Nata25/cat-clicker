@@ -34,16 +34,61 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         
         selected: 0,
+
+        isAdminMode: false,
     }
 
-    // ==== View ===== //
+    // ==== Views ===== //
+
+    let adminView = {
+        container: document.querySelector('#admin'),
+        enterAdminModeButton: document.querySelector('#switchAdminMode'),
+        adminForm: document.querySelector('#adminForm'),
+        nameInput: document.querySelector('#nameInput'),
+        imageInput: document.querySelector('#imgInput'),
+        clicksInput: document.querySelector('#clicksInput'),
+        saveButton: document.querySelector('#save'),
+        cancelButton: document.querySelector('#cancel'),
+
+        init: function() {
+            adminView.adminViewOff();
+
+            adminView.enterAdminModeButton.addEventListener('click', function(event) {
+                adminView.adminViewOn();
+                this.style.display = 'none';
+            });
+
+            adminView.saveButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                octopus.updateCat({
+                    name: adminView.nameInput.value,
+                    url: adminView.imageInput.value,
+                    clicks: adminView.clicksInput.value,
+                })
+            });
+
+            adminView.cancelButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                adminView.adminViewOff();
+            });
+        },
+
+        adminViewOff: function() {
+            adminView.adminForm.style.display = 'none';
+            adminView.enterAdminModeButton.style.display = 'block';
+        },
+
+        adminViewOn: function() {
+            adminView.adminForm.style.display = 'flex';
+        }
+    }
 
     let view = {
-
         container: document.querySelector('#cat'),
         nameElement: document.querySelector('#name'),
         imageElement: document.querySelector('img'),
         clicks: document.querySelector('#counter'),
+        adminArea: document.querySelector('#admin'),
 
         initList: function() {
             const list = document.querySelector('ul');
@@ -86,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
             view.initList();
             view.initCat();
             view.displayCat(model.cats[0]);
+            adminView.init();
         },
 
         getCurrentCat() {
@@ -104,7 +150,27 @@ document.addEventListener('DOMContentLoaded', function() {
         clickOnCat: function() {
             model.cats[model.selected].count++;
             view.increaseCatsCount();
+        },
+
+        // Admin mode functionality
+
+        isAdminMode: function() {
+            return model.isAdminMode;
+        },
+
+        toggleAdminMode: function() {
+            model.isAdminMode = !model.isAdminMode;
+        },
+
+        updateCat: function(cat) {
+            console.log(cat);
+            let selectedCat = octopus.getCurrentCat();
+            if (cat.name.length) selectedCat.name = cat.name;
+            if (cat.url.length) selectedCat.url = cat.url;
+            if (cat.clicks.length) selectedCat.count = cat.clicks;
+            view.displayCat();
         }
+
     }
 
     octopus.init();
