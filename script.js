@@ -2,6 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
+    // ==== Model ===== //
+
     const model = {
         cats: [
             {
@@ -34,18 +36,21 @@ document.addEventListener('DOMContentLoaded', function() {
         selected: 0,
     }
 
+    // ==== View ===== //
+
     let view = {
 
-        container: document.querySelector('.cat'),
-        nameElement: document.createElement('h2'),
-        imageElement: document.createElement('img'),
-        clicks: document.createElement('div'),
+        container: document.querySelector('#cat'),
+        nameElement: document.querySelector('#name'),
+        imageElement: document.querySelector('img'),
+        clicks: document.querySelector('#counter'),
 
         initList: function() {
             const list = document.querySelector('ul');
-            for (let i = 0; i < model.cats.length; i++) {
+            const cats = octopus.getAllCats();
+            for (let i = 0; i < cats.length; i++) {
                 const listItem = document.createElement('li');
-                listItem.innerText = model.cats[i].name;
+                listItem.innerText = cats[i].name;
                 list.appendChild(listItem);
                 listItem.addEventListener('click', function() {
                     octopus.selectCat(i);
@@ -54,25 +59,27 @@ document.addEventListener('DOMContentLoaded', function() {
         },
 
         initCat: function() {
-            view.container.appendChild(view.nameElement);
-            view.container.appendChild(view.imageElement);
-            view.clicks.className = 'count';
-            view.container.appendChild(view.clicks);
             view.imageElement.addEventListener('click', function() {
                 octopus.clickOnCat();
             });
         },
 
         displayCat: function(cat) {
+            if (!cat) {
+                cat = octopus.getCurrentCat();
+            }
             view.nameElement.innerText = cat.name;
             view.imageElement.setAttribute('src', cat.url);
+            view.imageElement.setAttribute('alt', 'Cat ' + cat.name);
             view.clicks.innerText = cat.count;            
         },
 
         increaseCatsCount: function() {
-            view.clicks.innerText = model.cats[model.selected].count; 
+            view.clicks.innerText = octopus.getCurrentCat().count; 
         }
     }
+
+    // ==== Controller ===== //
 
     let octopus = {
         init: function() {
@@ -81,9 +88,17 @@ document.addEventListener('DOMContentLoaded', function() {
             view.displayCat(model.cats[0]);
         },
 
+        getCurrentCat() {
+            return model.cats[model.selected];
+        },
+
+        getAllCats() {
+            return model.cats;
+        },
+
         selectCat: function(i) {
             model.selected = i;
-            view.displayCat(model.cats[model.selected]);
+            view.displayCat();
         },
 
         clickOnCat: function() {
