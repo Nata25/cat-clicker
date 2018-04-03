@@ -40,6 +40,56 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ==== Views ===== //
 
+    let listView = {
+
+        list: document.querySelector('ul'),
+
+        init: function() {
+            listView.render();
+        },
+
+        render: function() {
+            listView.list.innerHTML = '';
+            const cats = octopus.getAllCats();
+            for (let i = 0; i < cats.length; i++) {
+                const listItem = document.createElement('li');
+                listItem.innerText = cats[i].name;
+                listView.list.appendChild(listItem);
+                listItem.addEventListener('click', function() {
+                    octopus.selectCat(i);
+                })
+            }
+        }
+    }
+
+    let catView = {
+
+        container: document.querySelector('#cat'),
+        nameElement: document.querySelector('#name'),
+        imageElement: document.querySelector('img'),
+        clicks: document.querySelector('#counter'),
+
+        init: function() {
+            catView.imageElement.addEventListener('click', function() {
+                octopus.clickOnCat();
+            });
+        },
+
+        displayCat: function(cat) {
+            if (!cat) {
+                cat = octopus.getCurrentCat();
+            }
+            catView.nameElement.innerText = cat.name;
+            catView.imageElement.setAttribute('src', cat.url);
+            catView.imageElement.setAttribute('alt', 'Cat ' + cat.name);
+            catView.clicks.innerText = cat.count;            
+        },
+
+        increaseCatsCount: function() {
+            catView.clicks.innerText = octopus.getCurrentCat().count; 
+        }
+    }
+
     let adminView = {
         container: document.querySelector('#admin'),
         enterAdminModeButton: document.querySelector('#switchAdminMode'),
@@ -71,6 +121,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.preventDefault();
                 adminView.adminViewOff();
             });
+
+            window.addEventListener('keydown', function(event) {
+                if (event.which === 27) {
+                    adminView.adminViewOff();
+                }
+            })
         },
 
         adminViewOff: function() {
@@ -83,54 +139,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    let view = {
-        container: document.querySelector('#cat'),
-        nameElement: document.querySelector('#name'),
-        imageElement: document.querySelector('img'),
-        clicks: document.querySelector('#counter'),
-        adminArea: document.querySelector('#admin'),
-
-        initList: function() {
-            const list = document.querySelector('ul');
-            const cats = octopus.getAllCats();
-            for (let i = 0; i < cats.length; i++) {
-                const listItem = document.createElement('li');
-                listItem.innerText = cats[i].name;
-                list.appendChild(listItem);
-                listItem.addEventListener('click', function() {
-                    octopus.selectCat(i);
-                })
-            }
-        },
-
-        initCat: function() {
-            view.imageElement.addEventListener('click', function() {
-                octopus.clickOnCat();
-            });
-        },
-
-        displayCat: function(cat) {
-            if (!cat) {
-                cat = octopus.getCurrentCat();
-            }
-            view.nameElement.innerText = cat.name;
-            view.imageElement.setAttribute('src', cat.url);
-            view.imageElement.setAttribute('alt', 'Cat ' + cat.name);
-            view.clicks.innerText = cat.count;            
-        },
-
-        increaseCatsCount: function() {
-            view.clicks.innerText = octopus.getCurrentCat().count; 
-        }
-    }
-
     // ==== Controller ===== //
 
     let octopus = {
         init: function() {
-            view.initList();
-            view.initCat();
-            view.displayCat(model.cats[0]);
+            listView.init();
+            catView.init();
+            catView.displayCat(model.cats[0]);
             adminView.init();
         },
 
@@ -144,12 +159,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         selectCat: function(i) {
             model.selected = i;
-            view.displayCat();
+            catView.displayCat();
         },
 
         clickOnCat: function() {
             model.cats[model.selected].count++;
-            view.increaseCatsCount();
+            catView.increaseCatsCount();
         },
 
         // Admin mode functionality
@@ -158,19 +173,16 @@ document.addEventListener('DOMContentLoaded', function() {
             return model.isAdminMode;
         },
 
-        toggleAdminMode: function() {
-            model.isAdminMode = !model.isAdminMode;
-        },
-
         updateCat: function(cat) {
-            console.log(cat);
             let selectedCat = octopus.getCurrentCat();
             if (cat.name.length) selectedCat.name = cat.name;
             if (cat.url.length) selectedCat.url = cat.url;
             if (cat.clicks.length) selectedCat.count = cat.clicks;
-            view.displayCat();
+            catView.displayCat();
+            listView.render();
+            adminView.adminViewOff();
+            adminView.adminForm.reset();
         }
-
     }
 
     octopus.init();
