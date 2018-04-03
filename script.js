@@ -44,10 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         list: document.querySelector('ul'),
 
-        init: function() {
-            listView.render();
-        },
-
         render: function() {
             listView.list.innerHTML = '';
             const cats = octopus.getAllCats();
@@ -104,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
             adminView.adminViewOff();
 
             adminView.enterAdminModeButton.addEventListener('click', function(event) {
-                adminView.adminViewOn();
+                octopus.adminModeOn();
                 this.style.display = 'none';
             });
 
@@ -119,12 +115,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             adminView.cancelButton.addEventListener('click', function(event) {
                 event.preventDefault();
-                adminView.adminViewOff();
+                octopus.adminModeOff();
             });
 
             window.addEventListener('keydown', function(event) {
                 if (event.which === 27) {
-                    adminView.adminViewOff();
+                    octopus.adminModeOff();
                 }
             })
         },
@@ -136,6 +132,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         adminViewOn: function() {
             adminView.adminForm.style.display = 'flex';
+        },
+
+        updateForm: function() {
+            const cat = octopus.getCurrentCat(0);
+            adminView.nameInput.value = cat.name;
+            adminView.imageInput.value = cat.url;
+            adminView.clicksInput.value = cat.count;
         }
     }
 
@@ -143,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let octopus = {
         init: function() {
-            listView.init();
+            listView.render();
             catView.init();
             catView.displayCat(model.cats[0]);
             adminView.init();
@@ -160,17 +163,28 @@ document.addEventListener('DOMContentLoaded', function() {
         selectCat: function(i) {
             model.selected = i;
             catView.displayCat();
+            if (model.isAdminMode) adminView.updateForm();
         },
 
         clickOnCat: function() {
             model.cats[model.selected].count++;
             catView.increaseCatsCount();
+            adminView.updateForm();
         },
-
-        // Admin mode functionality
 
         isAdminMode: function() {
             return model.isAdminMode;
+        },
+
+        adminModeOff: function() {
+            model.isAdminMode = false;
+            adminView.adminViewOff();
+        },
+
+        adminModeOn: function() {
+            model.isAdminMode = true;
+            adminView.adminViewOn();
+            adminView.updateForm();
         },
 
         updateCat: function(cat) {
